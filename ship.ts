@@ -5,6 +5,8 @@ type ShipType =
   | "battleship"
   | "carrier";
 
+type Direction = "vertical" | "horizontal";
+
 class Ship {
   type: ShipType;
   length: number;

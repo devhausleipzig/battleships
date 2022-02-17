@@ -79,6 +79,8 @@ class ComputerGrid extends Grid {
     let randomCoordiante = getRandomKey(this.map);
     const tuple: Coordinate = JSON.parse(randomCoordiante);
     const charPostion = gridChars.indexOf(tuple[0]);
+    const directions: Direction[] = ["horizontal", "vertical"];
+    ship.direction = randomElementFromArray(directions);
 
     if (ship.direction === "horizontal") {
       const horizontalOffset = this.calculateOffset(
