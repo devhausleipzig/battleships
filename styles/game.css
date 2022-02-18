@@ -224,3 +224,19 @@
     background-color: hsl(0, 0%, 80%);
   }
 }
+
+.destroyer {
+  background-color: red;
+}
+.cruiser {
+  background-color: green;
+}
+.submarine {
+  background-color: blue;
+}
+.battleship {
+  background-color: yellow;
+}
+.carrier {
+  background-color: grey;
+}

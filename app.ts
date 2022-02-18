@@ -4,18 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   userGrid.createBoard();
   computerGrid.createBoard();
 
-  const destroyer = new Ship("destroyer");
-  computerGrid.generateShipPlacement(destroyer);
+  const ships = [
+    new Ship("destroyer"),
+    new Ship("cruiser"),
+    new Ship("submarine"),
+    new Ship("battleship"),
+    new Ship("carrier"),
+  ];
 
-  const cruiser = new Ship("cruiser");
-  computerGrid.generateShipPlacement(cruiser);
-
-  const submarine = new Ship("submarine");
-  computerGrid.generateShipPlacement(submarine);
-
-  const battleship = new Ship("battleship");
-  computerGrid.generateShipPlacement(battleship);
-
-  const carrier = new Ship("carrier");
-  computerGrid.generateShipPlacement(carrier);
+  ships.forEach((ship) => computerGrid.generateShipPlacement(ship));
 });

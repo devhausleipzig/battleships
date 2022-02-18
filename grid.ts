@@ -108,16 +108,9 @@ class ComputerGrid extends Grid {
   }
 
   private drawShip(positions: Coordinate[], type: ShipType) {
-    const colors = {
-      destroyer: "red",
-      cruiser: "green",
-      submarine: "blue",
-      battleship: "yellow",
-      carrier: "grey",
-    };
     positions.forEach((pos) => {
       const square = document.getElementById(`computer-${pos[0]}-${pos[1]}`);
-      if (square) square.style.backgroundColor = colors[type];
+      square?.classList.add(type);
     });
   }
 
