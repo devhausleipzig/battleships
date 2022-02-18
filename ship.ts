@@ -31,3 +31,16 @@ class Ship {
     }
   }
 }
+
+class PlayerShip extends Ship {
+  element: Element;
+  constructor(type: ShipType) {
+    super(type);
+    this.element = document.querySelector(`.${this.type}-container`) as Element;
+  }
+
+  rotateShip() {
+    const shipSpecificClassName = this.element.className.split(" ")[1];
+    this.element.classList.toggle(`${shipSpecificClassName}-vertical`);
+  }
+}

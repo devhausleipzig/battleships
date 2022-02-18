@@ -3,11 +3,11 @@ type Coordinate = [string, number];
 
 abstract class Grid {
   protected map: GridMap;
-  protected type: "user" | "computer";
-  grid: HTMLElement;
+  protected type: "player" | "computer";
+  element: HTMLElement;
   squares: HTMLElement[] = [];
 
-  constructor(type: "user" | "computer") {
+  constructor(type: "player" | "computer") {
     this.type = type;
     this.map = new Map();
     for (let i = 0; i < gridChars.length; i++) {
@@ -16,10 +16,10 @@ abstract class Grid {
         this.map.set(key, null);
       }
     }
-    this.grid = document.createElement("div");
-    this.grid.classList.add(
+    this.element = document.createElement("div");
+    this.element.classList.add(
       "battleship-grid",
-      this.type === "user" ? "grid-user" : "grid-computer"
+      this.type === "player" ? "grid-player" : "grid-computer"
     );
   }
   protected makeKey(tuple: Coordinate) {
@@ -46,32 +46,93 @@ abstract class Grid {
       const [char, index] = JSON.parse(key);
       const square = document.createElement("div");
       square.setAttribute("id", `${this.type}-${char}-${index}`);
-      this.grid.appendChild(square);
+      this.element.appendChild(square);
       this.squares.push(square);
     }
     const container = document.getElementById("container");
-    container?.appendChild(this.grid);
-  }
-}
-
-class UserGrid extends Grid {
-  constructor() {
-    super("user");
-  }
-}
-
-class ComputerGrid extends Grid {
-  constructor() {
-    super("computer");
+    container?.appendChild(this.element);
   }
 
-  private calculateOffset<T>(ship: Ship, array: T[], element: T) {
+  getMap() {
+    console.log(this.map);
+  }
+
+  protected calculateOffset<T>(ship: Ship, array: T[], element: T) {
     let offset = 0;
     const index = array.indexOf(element);
     if (index + ship.length > array.length) {
       offset = index + ship.length - array.length;
     }
     return offset;
+  }
+
+  protected isTaken(shipSquares: Coordinate[]) {
+    return shipSquares.some((square) => this.get(square));
+  }
+
+  protected drawShip(positions: Coordinate[], shipType: ShipType) {
+    positions.forEach((pos) => {
+      const square = document.getElementById(
+        `${this.type}-${pos[0]}-${pos[1]}`
+      );
+      square?.classList.add(shipType);
+    });
+  }
+}
+
+class PlayerGrid extends Grid {
+  ships: PlayerShip[] = [];
+  constructor() {
+    super("player");
+    this.ships.push(
+      new PlayerShip("destroyer"),
+      new PlayerShip("submarine"),
+      new PlayerShip("cruiser"),
+      new PlayerShip("battleship"),
+      new PlayerShip("carrier")
+    );
+  }
+
+  placeShip(ship: Ship, position: Coordinate) {
+    const shipSquares: Coordinate[] = [];
+    const charPostion = gridChars.indexOf(position[0]);
+
+    if (ship.direction === "horizontal") {
+      const horizontalOffset = this.calculateOffset(
+        ship,
+        gridNumbers,
+        position[1]
+      );
+      for (let i = 0; i < ship.length; i++) {
+        const number = gridNumbers[position[1] - 1 + i - horizontalOffset];
+        shipSquares.push([position[0], number]);
+      }
+    } else {
+      const verticalOffset = this.calculateOffset(ship, gridChars, position[0]);
+      for (let i = 0; i < ship.length; i++) {
+        const char = gridChars[charPostion + i - verticalOffset];
+        shipSquares.push([char, position[1]]);
+      }
+    }
+
+    console.log(shipSquares);
+
+    const isTaken = this.isTaken(shipSquares);
+
+    if (!isTaken) {
+      shipSquares.forEach((square) => this.set(square, ship.type));
+      this.drawShip(shipSquares, ship.type);
+      const shipElement = document
+        .querySelector(`.${ship.type}-container`)
+        ?.remove();
+      this.ships = this.ships.filter((s) => s !== ship);
+    }
+  }
+}
+
+class ComputerGrid extends Grid {
+  constructor() {
+    super("computer");
   }
 
   private makeRandomPosition(ship: Ship) {
@@ -101,21 +162,6 @@ class ComputerGrid extends Grid {
     }
 
     return shipSquares;
-  }
-
-  getMap() {
-    console.log(this.map);
-  }
-
-  private drawShip(positions: Coordinate[], type: ShipType) {
-    positions.forEach((pos) => {
-      const square = document.getElementById(`computer-${pos[0]}-${pos[1]}`);
-      square?.classList.add(type);
-    });
-  }
-
-  private isTaken(shipSquares: Coordinate[]) {
-    return shipSquares.some((square) => this.get(square));
   }
 
   generateShipPlacement(ship: Ship) {
