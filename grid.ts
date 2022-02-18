@@ -107,7 +107,7 @@ class ComputerGrid extends Grid {
     console.log(this.map);
   }
 
-  drawShip(positions: Coordinate[], type: ShipType) {
+  private drawShip(positions: Coordinate[], type: ShipType) {
     const colors = {
       destroyer: "red",
       cruiser: "green",
@@ -121,13 +121,17 @@ class ComputerGrid extends Grid {
     });
   }
 
+  private isTaken(shipSquares: Coordinate[]) {
+    return shipSquares.some((square) => this.get(square));
+  }
+
   generateShipPlacement(ship: Ship) {
     let shipSquares = this.makeRandomPosition(ship);
-    let isTaken = shipSquares.some((square) => this.get(square));
+    let isTaken = this.isTaken(shipSquares);
 
     while (isTaken) {
       shipSquares = this.makeRandomPosition(ship);
-      isTaken = shipSquares.some((square) => this.get(square));
+      isTaken = this.isTaken(shipSquares);
     }
 
     shipSquares.forEach((square) => this.set(square, ship.type));
