@@ -6,16 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
   playerGrid.createBoard();
   computerGrid.createBoard();
 
-  const computerShips = [
-    new Ship("destroyer"),
-    new Ship("cruiser"),
-    new Ship("submarine"),
-    new Ship("battleship"),
-    new Ship("carrier"),
-  ];
+  const computerShips: Ship[] = computerGrid.ships;
   computerShips.forEach((ship) => computerGrid.generateShipPlacement(ship));
 
-  const playerShips = playerGrid.ships;
+  const playerShips: PlayerShip[] = playerGrid.ships;
 
   rotateButton.addEventListener("click", () =>
     playerShips.forEach((ship) => ship.rotateShip())

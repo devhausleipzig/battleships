@@ -131,8 +131,16 @@ class PlayerGrid extends Grid {
 }
 
 class ComputerGrid extends Grid {
+  ships: Ship[] = [];
   constructor() {
     super("computer");
+    this.ships.push(
+      new Ship("destroyer"),
+      new Ship("cruiser"),
+      new Ship("submarine"),
+      new Ship("battleship"),
+      new Ship("carrier")
+    );
   }
 
   private makeRandomPosition(ship: Ship) {
