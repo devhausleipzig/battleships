@@ -75,7 +75,7 @@ abstract class Grid {
       const square = document.getElementById(
         `${this.type}-${pos[0]}-${pos[1]}`
       );
-      square?.classList.add(shipType);
+      square?.classList.add("taken", shipType);
     });
   }
 }
@@ -99,8 +99,9 @@ class PlayerGrid extends Grid {
 
     if (ship.direction === "horizontal") {
       for (let i = 0; i < ship.length; i++) {
-        const number = gridNumbers[position[1] - 1 - shipPart + i];
-        if (!number) {
+        const number = position[1] + i - shipPart;
+        console.log(number);
+        if (number > 10 || number <= 0) {
           return;
         }
         shipSquares.push([position[0], number]);
@@ -154,7 +155,7 @@ class ComputerGrid extends Grid {
         tuple[1]
       );
       for (let i = 0; i < ship.length; i++) {
-        const number = gridNumbers[tuple[1] - 1 + i - horizontalOffset];
+        const number = tuple[1] + i - horizontalOffset;
         shipSquares.push([tuple[0], number]);
       }
     } else {
