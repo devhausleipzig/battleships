@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function selectShipPart(e: Event) {
-    const target = e.target as Element;
-    selectedShipPart = parseInt(target.id.split("-")[1]);
+    const target = getElementFromEvent(e);
+    selectedShipPart = parseInt(target.id.substring(target.id.length - 1));
   }
 
   function selectShip(ship: PlayerShip) {
@@ -48,11 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function placeShip(e: Event) {
-    const target = e.target as Element;
-    const id = target.id;
-    const positionTuple = id.split("-").slice(1);
+    const target = getElementFromEvent(e);
+    const positionTuple = target.id.split("-").slice(1);
     const position: Coordinate = [positionTuple[0], parseInt(positionTuple[1])];
-    console.log(position);
     playerGrid.placeShip(selectedShip, selectedShipPart, position);
   }
 });
