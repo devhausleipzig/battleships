@@ -93,38 +93,34 @@ class PlayerGrid extends Grid {
     );
   }
 
-  placeShip(ship: Ship, position: Coordinate) {
+  placeShip(ship: Ship, shipPart: number, position: Coordinate) {
     const shipSquares: Coordinate[] = [];
     const charPostion = gridChars.indexOf(position[0]);
 
     if (ship.direction === "horizontal") {
-      const horizontalOffset = this.calculateOffset(
-        ship,
-        gridNumbers,
-        position[1]
-      );
       for (let i = 0; i < ship.length; i++) {
-        const number = gridNumbers[position[1] - 1 + i - horizontalOffset];
+        const number = gridNumbers[position[1] - 1 - shipPart + i];
+        if (!number) {
+          return;
+        }
         shipSquares.push([position[0], number]);
       }
     } else {
-      const verticalOffset = this.calculateOffset(ship, gridChars, position[0]);
       for (let i = 0; i < ship.length; i++) {
-        const char = gridChars[charPostion + i - verticalOffset];
+        const char = gridChars[charPostion + i - shipPart];
+        if (!char) {
+          return;
+        }
         shipSquares.push([char, position[1]]);
       }
     }
-
-    console.log(shipSquares);
 
     const isTaken = this.isTaken(shipSquares);
 
     if (!isTaken) {
       shipSquares.forEach((square) => this.set(square, ship.type));
       this.drawShip(shipSquares, ship.type);
-      const shipElement = document
-        .querySelector(`.${ship.type}-container`)
-        ?.remove();
+      document.querySelector(`.${ship.type}-container`)?.remove();
       this.ships = this.ships.filter((s) => s !== ship);
     }
   }

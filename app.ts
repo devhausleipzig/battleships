@@ -16,9 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   let selectedShipName;
+  let selectedShipPart: number;
   let selectedShip: PlayerShip;
 
   playerShips.forEach((ship) => {
+    ship.element.addEventListener("mousedown", selectShipPart);
     ship.element.addEventListener("dragstart", () => dragShip(ship));
   });
 
@@ -33,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
     square.addEventListener("dragend", dragEnd);
   });
 
+  function selectShipPart(e: Event) {
+    const target = e.target as Element;
+    selectedShipPart = parseInt(target.id.split("-")[1]);
+  }
+
   function dragShip(ship: PlayerShip) {
     selectedShip = ship;
   }
@@ -42,16 +49,18 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedShipName = target.classList[1].split("-")[0];
     console.log(selectedShipName);
   }
+
   function doNothing(e: Event) {
     e.preventDefault();
   }
+
   function dragDrop(e: Event) {
     const target = e.target as Element;
     const id = target.id;
     const positionTuple = id.split("-").slice(1);
     const position: Coordinate = [positionTuple[0], parseInt(positionTuple[1])];
     console.log(position);
-    playerGrid.placeShip(selectedShip, position);
+    playerGrid.placeShip(selectedShip, selectedShipPart, position);
   }
   function dragEnd(e: Event) {
     console.log(e.target);

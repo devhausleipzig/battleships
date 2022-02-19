@@ -40,6 +40,11 @@ class PlayerShip extends Ship {
   }
 
   rotateShip() {
+    if (this.direction === "vertical") {
+      this.direction = "horizontal";
+    } else {
+      this.direction = "vertical";
+    }
     const shipSpecificClassName = this.element.className.split(" ")[1];
     this.element.classList.toggle(`${shipSpecificClassName}-vertical`);
   }
