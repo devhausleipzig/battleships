@@ -15,24 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
     playerShips.forEach((ship) => ship.rotateShip())
   );
 
-  let selectedShipName;
-  let selectedShipPart: number;
   let selectedShip: PlayerShip;
+  let selectedShipPart: number;
 
   playerShips.forEach((ship) => {
     ship.element.addEventListener("mousedown", selectShipPart);
-    ship.element.addEventListener("dragstart", () => dragShip(ship));
+    ship.element.addEventListener("dragstart", () => selectShip(ship));
   });
 
   const playerSquares = playerGrid.element.children;
 
   Array.from(playerSquares).forEach((square) => {
-    square.addEventListener("dragstart", dragStart);
+    square.addEventListener("dragstart", doNothing);
     square.addEventListener("dragover", doNothing);
     square.addEventListener("dragenter", doNothing);
     square.addEventListener("dragleave", doNothing);
-    square.addEventListener("drop", dragDrop);
-    square.addEventListener("dragend", dragEnd);
+    square.addEventListener("drop", placeShip);
+    square.addEventListener("dragend", doNothing);
   });
 
   function selectShipPart(e: Event) {
@@ -40,29 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedShipPart = parseInt(target.id.split("-")[1]);
   }
 
-  function dragShip(ship: PlayerShip) {
+  function selectShip(ship: PlayerShip) {
     selectedShip = ship;
-  }
-
-  function dragStart(e: Event) {
-    const target = e.target as Element;
-    selectedShipName = target.classList[1].split("-")[0];
-    console.log(selectedShipName);
   }
 
   function doNothing(e: Event) {
     e.preventDefault();
   }
 
-  function dragDrop(e: Event) {
+  function placeShip(e: Event) {
     const target = e.target as Element;
     const id = target.id;
     const positionTuple = id.split("-").slice(1);
     const position: Coordinate = [positionTuple[0], parseInt(positionTuple[1])];
     console.log(position);
     playerGrid.placeShip(selectedShip, selectedShipPart, position);
-  }
-  function dragEnd(e: Event) {
-    console.log(e.target);
   }
 });
