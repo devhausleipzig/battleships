@@ -10,6 +10,7 @@ type Direction = "vertical" | "horizontal";
 class Ship {
   type: ShipType;
   length: number;
+  hits: number = 0;
   direction: "horizontal" | "vertical" = "horizontal";
 
   constructor(type: ShipType) {
@@ -29,6 +30,16 @@ class Ship {
         this.length = 5;
         break;
     }
+  }
+
+  hit() {
+    if (this.hits < this.length) {
+      this.hits += 1;
+    }
+  }
+
+  sunken() {
+    return this.hits === this.length;
   }
 }
 
