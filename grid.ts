@@ -84,13 +84,7 @@ class PlayerGrid extends Grid {
   ships: PlayerShip[] = [];
   constructor() {
     super("player");
-    this.ships.push(
-      new PlayerShip("destroyer"),
-      new PlayerShip("submarine"),
-      new PlayerShip("cruiser"),
-      new PlayerShip("battleship"),
-      new PlayerShip("carrier")
-    );
+    shipNames.forEach((shipName) => this.ships.push(new PlayerShip(shipName)));
   }
 
   placeShip(ship: Ship, shipPart: number, position: Coordinate) {
@@ -125,26 +119,37 @@ class PlayerGrid extends Grid {
       this.ships = this.ships.filter((s) => s !== ship);
     }
   }
+
+  randomHit(): Element {
+    let sqaureValue: string | null | undefined;
+    let randomKey = getRandomKey(this.map);
+    let coordinate: Coordinate = JSON.parse(randomKey);
+    sqaureValue = this.get(coordinate);
+    while (sqaureValue === "hit" || sqaureValue === "miss") {
+      console.log(sqaureValue);
+      randomKey = getRandomKey(this.map);
+      coordinate = JSON.parse(randomKey);
+      sqaureValue = this.get(coordinate);
+      console.log(sqaureValue);
+    }
+    return document.getElementById(
+      `player-${coordinate[0]}-${coordinate[1]}`
+    ) as Element;
+  }
 }
 
 class ComputerGrid extends Grid {
   ships: Ship[] = [];
   constructor() {
     super("computer");
-    this.ships.push(
-      new Ship("destroyer"),
-      new Ship("cruiser"),
-      new Ship("submarine"),
-      new Ship("battleship"),
-      new Ship("carrier")
-    );
+    shipNames.forEach((shipName) => this.ships.push(new Ship(shipName)));
   }
 
-  private makeRandomPosition(ship: Ship) {
+  private makeRandomPosition(ship: Ship): Coordinate[] {
     const shipSquares: Coordinate[] = [];
-    let randomCoordiante = getRandomKey(this.map);
-    const tuple: Coordinate = JSON.parse(randomCoordiante);
-    const charPostion = gridChars.indexOf(tuple[0]);
+    let randomKey = getRandomKey(this.map);
+    const coordinate: Coordinate = JSON.parse(randomKey);
+    const charPostion = gridChars.indexOf(coordinate[0]);
     const directions: Direction[] = ["horizontal", "vertical"];
     ship.direction = randomElementFromArray(directions);
 
@@ -152,17 +157,21 @@ class ComputerGrid extends Grid {
       const horizontalOffset = this.calculateOffset(
         ship,
         gridNumbers,
-        tuple[1]
+        coordinate[1]
       );
       for (let i = 0; i < ship.length; i++) {
-        const number = tuple[1] + i - horizontalOffset;
-        shipSquares.push([tuple[0], number]);
+        const number = coordinate[1] + i - horizontalOffset;
+        shipSquares.push([coordinate[0], number]);
       }
     } else {
-      const verticalOffset = this.calculateOffset(ship, gridChars, tuple[0]);
+      const verticalOffset = this.calculateOffset(
+        ship,
+        gridChars,
+        coordinate[0]
+      );
       for (let i = 0; i < ship.length; i++) {
         const char = gridChars[charPostion + i - verticalOffset];
-        shipSquares.push([char, tuple[1]]);
+        shipSquares.push([char, coordinate[1]]);
       }
     }
 
