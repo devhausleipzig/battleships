@@ -80,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const [_, char, number] = square.id.split("-");
     const position: Coordinate = [char, parseInt(number)];
     const squareValue = grid.get(position);
+
     if (shipNames.includes(squareValue as ShipType)) {
       console.log("hit", squareValue);
       const hitShip = grid.ships.find((ship) => ship.type === squareValue);
@@ -89,12 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (hitShip?.sunken()) {
         info.innerHTML = `${hitShip.type.toUpperCase()} sunken`;
       }
+      playGame(currentPlayer === "computer" ? "player" : "computer");
     } else if (!squareValue) {
       console.log("miss");
       square.classList.add("miss");
       grid.set(position, "miss");
+      playGame(currentPlayer === "computer" ? "player" : "computer");
     }
-
-    playGame(currentPlayer === "computer" ? "player" : "computer");
   }
 });
