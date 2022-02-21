@@ -32,13 +32,14 @@ class Ship {
     }
   }
 
-  hit() {
+  hit(): void {
     if (this.hits < this.length) {
       this.hits += 1;
     }
   }
 
-  sunken() {
+  sunken(): boolean {
+    console.log(this.hits, this.length);
     return this.hits === this.length;
   }
 }

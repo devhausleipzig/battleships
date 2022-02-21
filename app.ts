@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       info.innerHTML = "Please place all of your ships";
       return;
     }
-    info.innerHTML = "";
+
     turn.innerHTML = `${
       currentPlayer === "computer" ? "Computers" : "Players"
     } turn`;
@@ -94,10 +94,12 @@ document.addEventListener("DOMContentLoaded", () => {
       grid.set(position, "hit");
       if (hitShip?.sunken()) {
         console.log("sunken");
-        console.log(grid.ships);
-        grid.removeShip(hitShip);
         info.innerHTML = `${hitShip.type.toUpperCase()} sunken`;
-        console.log(grid.ships);
+        grid.removeShip(hitShip);
+        if (!grid.ships.length) {
+          info.innerHTML = "Game Over";
+          return;
+        }
       }
       playTurn(currentPlayer === "computer" ? "player" : "computer");
     } else if (!squareValue) {
