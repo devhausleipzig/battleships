@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const computerShips: Ship[] = computerGrid.ships;
   computerShips.forEach((ship) => computerGrid.generateShipPlacement(ship));
 
-  const playerShips: PlayerShip[] = playerGrid.ships;
+  const playerShips: PlayerShip[] = playerGrid.shipsToBePlaced;
 
   rotateButton.addEventListener("click", () =>
     playerShips.forEach((ship) => ship.rotateShip())
@@ -58,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function playTurn(currentPlayer: "player" | "computer" = "player") {
+    if (playerGrid.shipsToBePlaced.length > 0) {
+      info.innerHTML = "Please place all of your ships";
+      return;
+    }
+    info.innerHTML = "";
     turn.innerHTML = `${
       currentPlayer === "computer" ? "Computers" : "Players"
     } turn`;

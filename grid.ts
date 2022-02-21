@@ -89,14 +89,18 @@ abstract class Grid {
 }
 
 class PlayerGrid extends Grid {
+  shipsToBePlaced: PlayerShip[] = [];
   ships: PlayerShip[] = [];
+
   constructor() {
     super("player");
-    // Maybe add ships when places so we can easily  see if all ships are places
-    shipNames.forEach((shipName) => this.ships.push(new PlayerShip(shipName)));
+
+    shipNames.forEach((shipName) =>
+      this.shipsToBePlaced.push(new PlayerShip(shipName))
+    );
   }
 
-  placeShip(ship: Ship, shipPart: number, position: Coordinate): void {
+  placeShip(ship: PlayerShip, shipPart: number, position: Coordinate): void {
     const shipSquares: Coordinate[] = [];
     const charPostion = gridChars.indexOf(position[0]);
 
@@ -125,7 +129,10 @@ class PlayerGrid extends Grid {
       shipSquares.forEach((square) => this.set(square, ship.type));
       this.drawShip(shipSquares, ship.type);
       document.querySelector(`.${ship.type}-container`)?.remove();
-      this.ships = this.ships.filter((s) => s !== ship);
+      this.shipsToBePlaced = this.shipsToBePlaced.filter((s) => s !== ship);
+      this.ships.push(ship);
+      console.log(this.shipsToBePlaced);
+      console.log(this.ships);
     }
   }
 
@@ -151,6 +158,7 @@ class ComputerGrid extends Grid {
   ships: Ship[] = [];
   constructor() {
     super("computer");
+
     shipNames.forEach((shipName) => this.ships.push(new Ship(shipName)));
   }
 

@@ -51,6 +51,7 @@ class PlayerShip extends Ship {
   }
 
   rotateShip() {
+    console.log("rotate");
     if (this.direction === "vertical") {
       this.direction = "horizontal";
     } else {
