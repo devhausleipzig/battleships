@@ -24,6 +24,7 @@ abstract class Grid {
       this.type === "player" ? "grid-player" : "grid-computer"
     );
   }
+
   protected makeKey(tuple: Coordinate): Key {
     const [char, number] = tuple;
     return `${char}-${number}`;
