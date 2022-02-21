@@ -91,6 +91,38 @@ abstract class Grid {
       square?.classList.add("taken", shipType);
     });
   }
+
+  takeShot(square: Element) {
+    const info = document.getElementById("info") as Element;
+    const currentPlayer = this.type === "computer" ? "You" : "CPU";
+    const [_, char, number] = square.id.split("-");
+    const position: Coordinate = [char, parseInt(number)];
+    const squareValue = this.get(position);
+
+    if (shipNames.includes(squareValue as ShipType)) {
+      const hitShip = this.ships.find(
+        (ship) => ship.type === squareValue
+      ) as Ship;
+      hitShip.hit();
+      square.classList.add("boom");
+      this.set(position, "hit");
+      info.innerHTML = `${currentPlayer} hit`;
+      if (hitShip.sunken()) {
+        info.innerHTML = `${
+          this.type === "computer" ? "CPU" : "Your"
+        } ${hitShip.type.toUpperCase()} sunken`;
+        this.removeShip(hitShip);
+        if (!this.ships.length) {
+          info.innerHTML = "Game Over";
+          return;
+        }
+      }
+    } else if (!squareValue) {
+      square.classList.add("miss");
+      this.set(position, "miss");
+      info.innerHTML = `${currentPlayer} missed`;
+    }
+  }
 }
 
 class PlayerGrid extends Grid {
