@@ -39,7 +39,6 @@ class Ship {
   }
 
   sunken(): boolean {
-    console.log(this.hits, this.length);
     return this.hits === this.length;
   }
 }
@@ -52,7 +51,6 @@ class PlayerShip extends Ship {
   }
 
   rotateShip() {
-    console.log("rotate");
     if (this.direction === "vertical") {
       this.direction = "horizontal";
     } else {

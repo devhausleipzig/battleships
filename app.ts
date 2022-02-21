@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   playerGrid.createBoard();
   computerGrid.createBoard();
 
-  console.log(playerGrid.getMap());
-
   const computerShips: Ship[] = computerGrid.ships;
   computerShips.forEach((ship) => computerGrid.generateShipPlacement(ship));
 
@@ -52,14 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const squareValue = grid.get(position);
 
     if (shipNames.includes(squareValue as ShipType)) {
-      console.log("hit", squareValue);
       const hitShip = grid.ships.find((ship) => ship.type === squareValue);
       hitShip?.hit();
       square.classList.add("boom");
       grid.set(position, "hit");
       if (hitShip?.sunken()) {
-        console.log("sunken");
-        info.innerHTML = `${hitShip.type.toUpperCase()} sunken`;
+        info.innerHTML = `${
+          currentPlayer === "player" ? "CPU" : "Your"
+        } ${hitShip.type.toUpperCase()} sunken`;
         grid.removeShip(hitShip);
         if (!grid.ships.length) {
           info.innerHTML = "Game Over";
@@ -68,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       playTurn(currentPlayer === "computer" ? "player" : "computer");
     } else if (!squareValue) {
-      console.log("miss");
       square.classList.add("miss");
       grid.set(position, "miss");
       playTurn(currentPlayer === "computer" ? "player" : "computer");

@@ -129,7 +129,6 @@ class PlayerGrid extends Grid {
       square.addEventListener("drop", (e) => {
         const target = getElementFromEvent(e);
         const positionTuple = target.id.split("-").slice(1);
-        console.log(target.id);
         const position: Coordinate = [
           positionTuple[0],
           parseInt(positionTuple[1]),
@@ -148,7 +147,6 @@ class PlayerGrid extends Grid {
     if (ship.direction === "horizontal") {
       for (let i = 0; i < ship.length; i++) {
         const number = position[1] + i - shipPart;
-        console.log(number);
         if (number > 10 || number <= 0) {
           return;
         }
