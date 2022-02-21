@@ -93,7 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
       square.classList.add("boom");
       grid.set(position, "hit");
       if (hitShip?.sunken()) {
+        console.log("sunken");
+        console.log(grid.ships);
+        grid.removeShip(hitShip);
         info.innerHTML = `${hitShip.type.toUpperCase()} sunken`;
+        console.log(grid.ships);
       }
       playTurn(currentPlayer === "computer" ? "player" : "computer");
     } else if (!squareValue) {

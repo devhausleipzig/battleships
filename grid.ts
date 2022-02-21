@@ -6,6 +6,7 @@ type Coordinate = [string, number];
 abstract class Grid {
   protected state: GridState;
   protected type: "player" | "computer";
+  ships: Ship[] = [];
   element: HTMLElement;
   squares: HTMLElement[] = [];
 
@@ -63,6 +64,10 @@ abstract class Grid {
 
   getMap(): void {
     console.log(this.state);
+  }
+
+  removeShip(ship: Ship) {
+    this.ships = this.ships.filter((s) => s !== ship);
   }
 
   protected calculateOffset<T>(ship: Ship, array: T[], element: T) {
@@ -131,8 +136,6 @@ class PlayerGrid extends Grid {
       document.querySelector(`.${ship.type}-container`)?.remove();
       this.shipsToBePlaced = this.shipsToBePlaced.filter((s) => s !== ship);
       this.ships.push(ship);
-      console.log(this.shipsToBePlaced);
-      console.log(this.ships);
     }
   }
 
@@ -142,11 +145,9 @@ class PlayerGrid extends Grid {
     let coordinate: Coordinate = this.makeCoordinate(randomKey);
     sqaureValue = this.get(coordinate);
     while (sqaureValue === "hit" || sqaureValue === "miss") {
-      console.log(sqaureValue);
       randomKey = getRandomKey(this.state);
       coordinate = this.makeCoordinate(randomKey);
       sqaureValue = this.get(coordinate);
-      console.log(sqaureValue);
     }
     return document.getElementById(
       `player-${coordinate[0]}-${coordinate[1]}`
@@ -155,7 +156,6 @@ class PlayerGrid extends Grid {
 }
 
 class ComputerGrid extends Grid {
-  ships: Ship[] = [];
   constructor() {
     super("computer");
 
