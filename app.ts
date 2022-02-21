@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     playerGrid.placeShip(selectedShip, selectedShipPart, position);
   }
 
-  function playGame(currentPlayer: "player" | "computer" = "player") {
+  function playTurn(currentPlayer: "player" | "computer" = "player") {
     turn.innerHTML = `${
       currentPlayer === "computer" ? "Computers" : "Players"
     } turn`;
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  startButton.addEventListener("click", () => playGame());
+  startButton.addEventListener("click", () => playTurn());
 
   function revealSquare(square: Element, currentPlayer: "player" | "computer") {
     let grid = currentPlayer === "player" ? computerGrid : playerGrid;
@@ -90,12 +90,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (hitShip?.sunken()) {
         info.innerHTML = `${hitShip.type.toUpperCase()} sunken`;
       }
-      playGame(currentPlayer === "computer" ? "player" : "computer");
+      playTurn(currentPlayer === "computer" ? "player" : "computer");
     } else if (!squareValue) {
       console.log("miss");
       square.classList.add("miss");
       grid.set(position, "miss");
-      playGame(currentPlayer === "computer" ? "player" : "computer");
+      playTurn(currentPlayer === "computer" ? "player" : "computer");
     }
   }
 });

@@ -92,6 +92,7 @@ class PlayerGrid extends Grid {
   ships: PlayerShip[] = [];
   constructor() {
     super("player");
+    // Maybe add ships when places so we can easily  see if all ships are places
     shipNames.forEach((shipName) => this.ships.push(new PlayerShip(shipName)));
   }
 
