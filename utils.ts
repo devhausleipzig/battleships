@@ -3,8 +3,8 @@ function randomElementFromArray<T>(array: T[]): T {
   return array[randomIndex];
 }
 
-function getRandomKey(grid: GridMap) {
-  const keys = Array.from(grid.keys());
+function getRandomKey(grid: GridState) {
+  const keys = Object.keys(grid);
   return randomElementFromArray(keys);
 }
 
