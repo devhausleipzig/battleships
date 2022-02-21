@@ -8,13 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   playerGrid.createBoard();
   computerGrid.createBoard();
 
-  const computerShips: Ship[] = computerGrid.ships;
-  computerShips.forEach((ship) => computerGrid.generateShipPlacement(ship));
-
-  const playerShips: PlayerShip[] = playerGrid.shipsToBePlaced;
+  computerGrid.ships.forEach((ship) =>
+    computerGrid.generateShipPlacement(ship)
+  );
 
   rotateButton.addEventListener("click", () =>
-    playerShips.forEach((ship) => ship.rotateShip())
+    playerGrid.shipsToBePlaced.forEach((ship) => ship.rotateShip())
   );
 
   playerGrid.addListeners();

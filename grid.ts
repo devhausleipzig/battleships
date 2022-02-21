@@ -62,10 +62,6 @@ abstract class Grid {
     container?.appendChild(this.element);
   }
 
-  getMap(): void {
-    console.log(this.state);
-  }
-
   removeShip(ship: Ship) {
     this.ships = this.ships.filter((s) => s !== ship);
   }
@@ -92,7 +88,7 @@ abstract class Grid {
     });
   }
 
-  takeShot(square: Element) {
+  takeShot(square: Element): void {
     const info = document.getElementById("info") as Element;
     const currentPlayer = this.type === "computer" ? "You" : "CPU";
     const [_, char, number] = square.id.split("-");
@@ -139,7 +135,7 @@ class PlayerGrid extends Grid {
     );
   }
 
-  addListeners() {
+  addListeners(): void {
     this.shipsToBePlaced.forEach((ship) => {
       ship.element.addEventListener("mousedown", (e) => {
         const target = getElementFromEvent(e);
