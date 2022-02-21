@@ -96,6 +96,8 @@ abstract class Grid {
 class PlayerGrid extends Grid {
   shipsToBePlaced: PlayerShip[] = [];
   ships: PlayerShip[] = [];
+  selectedShip: PlayerShip | null = null;
+  selectedShipPart: number = 0;
 
   constructor() {
     super("player");
@@ -103,6 +105,40 @@ class PlayerGrid extends Grid {
     shipNames.forEach((shipName) =>
       this.shipsToBePlaced.push(new PlayerShip(shipName))
     );
+  }
+
+  addListeners() {
+    this.shipsToBePlaced.forEach((ship) => {
+      ship.element.addEventListener("mousedown", (e) => {
+        const target = getElementFromEvent(e);
+        this.selectedShipPart = parseInt(
+          target.id.substring(target.id.length - 1)
+        );
+      });
+      ship.element.addEventListener(
+        "dragstart",
+        () => (this.selectedShip = ship)
+      );
+    });
+
+    this.squares.forEach((square) => {
+      square.addEventListener("dragstart", (e) => e.preventDefault());
+      square.addEventListener("dragover", (e) => e.preventDefault());
+      square.addEventListener("dragenter", (e) => e.preventDefault());
+      square.addEventListener("dragleave", (e) => e.preventDefault());
+      square.addEventListener("drop", (e) => {
+        const target = getElementFromEvent(e);
+        const positionTuple = target.id.split("-").slice(1);
+        console.log(target.id);
+        const position: Coordinate = [
+          positionTuple[0],
+          parseInt(positionTuple[1]),
+        ];
+        if (this.selectedShip)
+          this.placeShip(this.selectedShip, this.selectedShipPart, position);
+      });
+      square.addEventListener("dragend", (e) => e.preventDefault());
+    });
   }
 
   placeShip(ship: PlayerShip, shipPart: number, position: Coordinate): void {
