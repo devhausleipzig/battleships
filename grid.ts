@@ -1,5 +1,6 @@
 type PossibleValue = "" | ShipType | "hit" | "miss";
-type GridState = Record<string, PossibleValue>;
+type Key = `${string}-${number}`;
+type GridState = Record<Key, PossibleValue>;
 type Coordinate = [string, number];
 
 abstract class Grid {
@@ -13,7 +14,7 @@ abstract class Grid {
     this.state = {};
     for (let i = 0; i < gridChars.length; i++) {
       for (let j = 1; j <= 10; j++) {
-        const key = JSON.stringify([gridChars[i], j]);
+        const key = this.makeKey([gridChars[i], j]);
         this.state[key] = "";
       }
     }
@@ -23,7 +24,7 @@ abstract class Grid {
       this.type === "player" ? "grid-player" : "grid-computer"
     );
   }
-  protected makeKey(tuple: Coordinate) {
+  protected makeKey(tuple: Coordinate): Key {
     const [char, number] = tuple;
     return `${char}-${number}`;
   }
@@ -38,17 +39,17 @@ abstract class Grid {
     return this.state[key];
   }
 
-  set(tuple: Coordinate, value: PossibleValue) {
+  set(tuple: Coordinate, value: PossibleValue): void {
     const key = this.makeKey(tuple);
-    return (this.state[key] = value);
+    this.state[key] = value;
   }
 
-  has(tuple: Coordinate) {
+  has(tuple: Coordinate): boolean {
     const key = this.makeKey(tuple);
     return !!this.state[key];
   }
 
-  createBoard() {
+  createBoard(): void {
     for (const key in this.state) {
       const square = document.createElement("div");
       square.setAttribute("id", `${this.type}-${key}`);
@@ -59,7 +60,7 @@ abstract class Grid {
     container?.appendChild(this.element);
   }
 
-  getMap() {
+  getMap(): void {
     console.log(this.state);
   }
 
@@ -72,11 +73,11 @@ abstract class Grid {
     return offset;
   }
 
-  protected isTaken(shipSquares: Coordinate[]) {
+  protected isTaken(shipSquares: Coordinate[]): boolean {
     return shipSquares.some((square) => this.get(square));
   }
 
-  protected drawShip(positions: Coordinate[], shipType: ShipType) {
+  protected drawShip(positions: Coordinate[], shipType: ShipType): void {
     positions.forEach((pos) => {
       const square = document.getElementById(
         `${this.type}-${pos[0]}-${pos[1]}`
@@ -93,7 +94,7 @@ class PlayerGrid extends Grid {
     shipNames.forEach((shipName) => this.ships.push(new PlayerShip(shipName)));
   }
 
-  placeShip(ship: Ship, shipPart: number, position: Coordinate) {
+  placeShip(ship: Ship, shipPart: number, position: Coordinate): void {
     const shipSquares: Coordinate[] = [];
     const charPostion = gridChars.indexOf(position[0]);
 
@@ -184,7 +185,7 @@ class ComputerGrid extends Grid {
     return shipSquares;
   }
 
-  generateShipPlacement(ship: Ship) {
+  generateShipPlacement(ship: Ship): void {
     let shipSquares = this.makeRandomPosition(ship);
     let isTaken = this.isTaken(shipSquares);
 
