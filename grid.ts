@@ -25,7 +25,7 @@ abstract class Grid {
     );
   }
 
-  makePositionFromId(id: string): Position {
+  static makePositionFromId(id: string): Position {
     const [char, number] = id.split("-").slice(1);
     return `${char}-${parseInt(number)}`;
   }
@@ -85,7 +85,7 @@ abstract class Grid {
   takeShot(square: Element): void {
     const info = document.getElementById("info") as Element;
     const currentPlayer = this.type === "computer" ? "You" : "CPU";
-    const position = this.makePositionFromId(square.id);
+    const position = Grid.makePositionFromId(square.id);
     const squareValue = this.get(position);
 
     if (shipNames.includes(squareValue as ShipType)) {
@@ -148,7 +148,7 @@ class PlayerGrid extends Grid {
     this.element.addEventListener("dragleave", (e) => e.preventDefault());
     this.element.addEventListener("drop", (e) => {
       const target = getElementFromEvent(e);
-      const position = this.makePositionFromId(target.id);
+      const position = Grid.makePositionFromId(target.id);
 
       if (this.selectedShip)
         this.placeShip(this.selectedShip, this.selectedShipPart, position);

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function fire(e: Event) {
     const square = getElementFromEvent(e);
     const isSquare = square.matches(".grid-computer > div");
-    const position = computerGrid.makePositionFromId(square.id);
+    const position = Grid.makePositionFromId(square.id);
     const squareValue = computerGrid.get(position);
 
     if (!isSquare) {
