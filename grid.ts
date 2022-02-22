@@ -1,7 +1,6 @@
 type PossibleValue = "" | ShipType | "hit" | "miss";
-type Key = `${string}-${number}`;
-type GridState = Record<Key, PossibleValue>;
-type Coordinate = [string, number];
+type Position = `${string}-${number}`;
+type GridState = Record<Position, PossibleValue>;
 
 abstract class Grid {
   protected state: GridState;
@@ -15,8 +14,8 @@ abstract class Grid {
     this.state = {};
     for (let i = 0; i < gridChars.length; i++) {
       for (let j = 1; j <= 10; j++) {
-        const key = this.makeKey([gridChars[i], j]);
-        this.state[key] = "";
+        const position: Position = `${gridChars[i]}-${j}`;
+        this.state[position] = "";
       }
     }
     this.element = document.createElement("div");
@@ -26,34 +25,26 @@ abstract class Grid {
     );
   }
 
-  protected makeKey(tuple: Coordinate): Key {
-    const [char, number] = tuple;
-    return `${char}-${number}`;
-  }
-
-  protected makeCoordinate(key: string): Coordinate {
-    const [char, number] = key.split("-");
-    return [char, parseInt(number)];
-  }
-
-  makeCoordinateFromId(id: string): Coordinate {
+  makePositionFromId(id: string): Position {
     const [char, number] = id.split("-").slice(1);
-    return [char, parseInt(number)];
+    return `${char}-${parseInt(number)}`;
   }
 
-  get(tuple: Coordinate): PossibleValue {
-    const key = this.makeKey(tuple);
-    return this.state[key];
+  makeCoordinateFromPosition(position: Position): [string, number] {
+    const positionArray = position.split("-");
+    return [positionArray[0], parseInt(positionArray[1])];
   }
 
-  set(tuple: Coordinate, value: PossibleValue): void {
-    const key = this.makeKey(tuple);
-    this.state[key] = value;
+  get(position: Position): PossibleValue {
+    return this.state[position];
   }
 
-  has(tuple: Coordinate): boolean {
-    const key = this.makeKey(tuple);
-    return !!this.state[key];
+  set(position: Position, value: PossibleValue): void {
+    this.state[position] = value;
+  }
+
+  has(position: Position): boolean {
+    return !!this.state[position];
   }
 
   createBoard(): void {
@@ -80,15 +71,13 @@ abstract class Grid {
     return offset;
   }
 
-  protected isTaken(shipSquares: Coordinate[]): boolean {
+  protected isTaken(shipSquares: Position[]): boolean {
     return shipSquares.some((square) => this.get(square));
   }
 
-  protected drawShip(positions: Coordinate[], shipType: ShipType): void {
-    positions.forEach((pos) => {
-      const square = document.getElementById(
-        `${this.type}-${pos[0]}-${pos[1]}`
-      );
+  protected drawShip(positions: Position[], shipType: ShipType): void {
+    positions.forEach((position) => {
+      const square = document.getElementById(`${this.type}-${position}`);
       square?.classList.add("taken", shipType);
     });
   }
@@ -96,8 +85,7 @@ abstract class Grid {
   takeShot(square: Element): void {
     const info = document.getElementById("info") as Element;
     const currentPlayer = this.type === "computer" ? "You" : "CPU";
-    const [_, char, number] = square.id.split("-");
-    const position: Coordinate = [char, parseInt(number)];
+    const position = this.makePositionFromId(square.id);
     const squareValue = this.get(position);
 
     if (shipNames.includes(squareValue as ShipType)) {
@@ -160,7 +148,7 @@ class PlayerGrid extends Grid {
     this.element.addEventListener("dragleave", (e) => e.preventDefault());
     this.element.addEventListener("drop", (e) => {
       const target = getElementFromEvent(e);
-      const position = this.makeCoordinateFromId(target.id);
+      const position = this.makePositionFromId(target.id);
 
       if (this.selectedShip)
         this.placeShip(this.selectedShip, this.selectedShipPart, position);
@@ -168,17 +156,19 @@ class PlayerGrid extends Grid {
     this.element.addEventListener("dragend", (e) => e.preventDefault());
   }
 
-  placeShip(ship: PlayerShip, shipPart: number, position: Coordinate): void {
-    const shipSquares: Coordinate[] = [];
+  placeShip(ship: PlayerShip, shipPart: number, position: Position): void {
+    const shipSquares: Position[] = [];
+    const [charPosition, numberPoistion] =
+      this.makeCoordinateFromPosition(position);
     const charPostion = gridChars.indexOf(position[0]);
 
     if (ship.direction === "horizontal") {
       for (let i = 0; i < ship.length; i++) {
-        const number = position[1] + i - shipPart;
+        const number = numberPoistion + i - shipPart;
         if (number > 10 || number <= 0) {
           return;
         }
-        shipSquares.push([position[0], number]);
+        shipSquares.push(`${charPosition}-${number}`);
       }
     } else {
       for (let i = 0; i < ship.length; i++) {
@@ -186,7 +176,7 @@ class PlayerGrid extends Grid {
         if (!char) {
           return;
         }
-        shipSquares.push([char, position[1]]);
+        shipSquares.push(`${char}-${numberPoistion}`);
       }
     }
 
@@ -203,17 +193,13 @@ class PlayerGrid extends Grid {
 
   randomHit(): Element {
     let sqaureValue: PossibleValue;
-    let randomKey = getRandomKey(this.state);
-    let coordinate: Coordinate = this.makeCoordinate(randomKey);
-    sqaureValue = this.get(coordinate);
+    let randomPosition = getRandomPosition(this.state);
+    sqaureValue = this.get(randomPosition);
     while (sqaureValue === "hit" || sqaureValue === "miss") {
-      randomKey = getRandomKey(this.state);
-      coordinate = this.makeCoordinate(randomKey);
-      sqaureValue = this.get(coordinate);
+      randomPosition = getRandomPosition(this.state);
+      sqaureValue = this.get(randomPosition);
     }
-    return document.getElementById(
-      `player-${coordinate[0]}-${coordinate[1]}`
-    ) as Element;
+    return document.getElementById(`player-${randomPosition}`) as Element;
   }
 }
 
@@ -224,11 +210,13 @@ class ComputerGrid extends Grid {
     shipNames.forEach((shipName) => this.ships.push(new Ship(shipName)));
   }
 
-  private makeRandomPosition(ship: Ship): Coordinate[] {
-    const shipSquares: Coordinate[] = [];
-    let randomKey = getRandomKey(this.state);
-    const coordinate: Coordinate = this.makeCoordinate(randomKey);
-    const charPostion = gridChars.indexOf(coordinate[0]);
+  private makeRandomPosition(ship: Ship): Position[] {
+    const shipSquares: Position[] = [];
+    let [randomChar, randomNumber] = this.makeCoordinateFromPosition(
+      getRandomPosition(this.state)
+    );
+
+    const charPostion = gridChars.indexOf(randomChar);
     const directions: Direction[] = ["horizontal", "vertical"];
     ship.direction = randomElementFromArray(directions);
 
@@ -236,21 +224,17 @@ class ComputerGrid extends Grid {
       const horizontalOffset = this.calculateOffset(
         ship,
         gridNumbers,
-        coordinate[1]
+        randomNumber
       );
       for (let i = 0; i < ship.length; i++) {
-        const number = coordinate[1] + i - horizontalOffset;
-        shipSquares.push([coordinate[0], number]);
+        const number = randomNumber + i - horizontalOffset;
+        shipSquares.push(`${randomChar}-${number}`);
       }
     } else {
-      const verticalOffset = this.calculateOffset(
-        ship,
-        gridChars,
-        coordinate[0]
-      );
+      const verticalOffset = this.calculateOffset(ship, gridChars, randomChar);
       for (let i = 0; i < ship.length; i++) {
         const char = gridChars[charPostion + i - verticalOffset];
-        shipSquares.push([char, coordinate[1]]);
+        shipSquares.push(`${char}-${randomNumber}`);
       }
     }
 
