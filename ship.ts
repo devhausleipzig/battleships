@@ -38,7 +38,7 @@ class Ship {
     }
   }
 
-  sunken(): boolean {
+  get sunken(): boolean {
     return this.hits === this.length;
   }
 }

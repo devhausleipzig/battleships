@@ -96,7 +96,7 @@ abstract class Grid {
       square.classList.add("boom");
       this.set(position, "hit");
       info.innerHTML = `${currentPlayer} hit`;
-      if (hitShip.sunken()) {
+      if (hitShip.sunken) {
         info.innerHTML = `${
           this.type === "computer" ? "CPU" : "Your"
         } ${hitShip.type.toUpperCase()} sunken`;
