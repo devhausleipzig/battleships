@@ -30,7 +30,7 @@ abstract class Grid {
     return `${char}-${parseInt(number)}`;
   }
 
-  makeCoordinateFromPosition(position: Position): [string, number] {
+  static makeCoordinateFromPosition(position: Position): [string, number] {
     const positionArray = position.split("-");
     return [positionArray[0], parseInt(positionArray[1])];
   }
@@ -159,7 +159,7 @@ class PlayerGrid extends Grid {
   placeShip(ship: PlayerShip, shipPart: number, position: Position): void {
     const shipSquares: Position[] = [];
     const [charPosition, numberPoistion] =
-      this.makeCoordinateFromPosition(position);
+      Grid.makeCoordinateFromPosition(position);
     const charPostion = gridChars.indexOf(position[0]);
 
     if (ship.direction === "horizontal") {
@@ -212,7 +212,7 @@ class ComputerGrid extends Grid {
 
   private makeRandomPosition(ship: Ship): Position[] {
     const shipSquares: Position[] = [];
-    let [randomChar, randomNumber] = this.makeCoordinateFromPosition(
+    let [randomChar, randomNumber] = Grid.makeCoordinateFromPosition(
       getRandomPosition(this.state)
     );
 
