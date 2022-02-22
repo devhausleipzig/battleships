@@ -18,7 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   playerGrid.addListeners();
 
-  function fire(square: HTMLElement) {
+  function fire(e: Event) {
+    const square = getElementFromEvent(e);
+    const coordinate = computerGrid.makeCoordinateFromId(square.id);
+    const squareValue = computerGrid.get(coordinate);
+
+    if (squareValue === "hit" || squareValue === "miss") {
+      info.innerHTML = "Select another square";
+      return;
+    }
+
     if (!playerGrid.ships.length || !computerGrid.ships.length) {
       return;
     }
@@ -38,8 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     info.innerHTML = "Game started";
 
-    computerGrid.squares.forEach((square) => {
-      square.addEventListener("click", () => fire(square));
-    });
+    computerGrid.element.addEventListener("click", fire);
   });
 });

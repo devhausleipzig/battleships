@@ -36,6 +36,11 @@ abstract class Grid {
     return [char, parseInt(number)];
   }
 
+  makeCoordinateFromId(id: string): Coordinate {
+    const [char, number] = id.split("-").slice(1);
+    return [char, parseInt(number)];
+  }
+
   get(tuple: Coordinate): PossibleValue {
     const key = this.makeKey(tuple);
     return this.state[key];
@@ -149,23 +154,18 @@ class PlayerGrid extends Grid {
       );
     });
 
-    this.squares.forEach((square) => {
-      square.addEventListener("dragstart", (e) => e.preventDefault());
-      square.addEventListener("dragover", (e) => e.preventDefault());
-      square.addEventListener("dragenter", (e) => e.preventDefault());
-      square.addEventListener("dragleave", (e) => e.preventDefault());
-      square.addEventListener("drop", (e) => {
-        const target = getElementFromEvent(e);
-        const positionTuple = target.id.split("-").slice(1);
-        const position: Coordinate = [
-          positionTuple[0],
-          parseInt(positionTuple[1]),
-        ];
-        if (this.selectedShip)
-          this.placeShip(this.selectedShip, this.selectedShipPart, position);
-      });
-      square.addEventListener("dragend", (e) => e.preventDefault());
+    this.element.addEventListener("dragstart", (e) => e.preventDefault());
+    this.element.addEventListener("dragover", (e) => e.preventDefault());
+    this.element.addEventListener("dragenter", (e) => e.preventDefault());
+    this.element.addEventListener("dragleave", (e) => e.preventDefault());
+    this.element.addEventListener("drop", (e) => {
+      const target = getElementFromEvent(e);
+      const position = this.makeCoordinateFromId(target.id);
+
+      if (this.selectedShip)
+        this.placeShip(this.selectedShip, this.selectedShipPart, position);
     });
+    this.element.addEventListener("dragend", (e) => e.preventDefault());
   }
 
   placeShip(ship: PlayerShip, shipPart: number, position: Coordinate): void {
