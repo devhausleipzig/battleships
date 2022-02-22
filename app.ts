@@ -20,8 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function fire(e: Event) {
     const square = getElementFromEvent(e);
+    const isSquare = square.matches(".grid-computer > div");
     const coordinate = computerGrid.makeCoordinateFromId(square.id);
     const squareValue = computerGrid.get(coordinate);
+
+    if (!isSquare) {
+      return;
+    }
 
     if (squareValue === "hit" || squareValue === "miss") {
       info.innerHTML = "Select another square";
