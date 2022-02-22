@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (playerGrid.ships.length && computerGrid.ships.length) {
       const firedSquare = playerGrid.randomHit();
-      setTimeout(() => playerGrid.takeShot(firedSquare), 1000);
+      playerGrid.takeShot(firedSquare);
     }
   }
 
